@@ -10,6 +10,27 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  String url = "https://www.themealdb.com/api/json/v1/1/filter.php?a=Indian";
+  List<Lunch> _ideas = [];
+
+  Future<void> _getLunchIdeas() async {
+    http.Response response;
+
+    Uri uri = Uri.parse(url);
+    response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      if (jsonData['meals'] != null) {
+        List<dynamic> meals = jsonData['meals'];
+        setState(() {
+          _ideas = meals.map((json) => Lunch.fromJson(json)).toList();
+        });
+      }
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
